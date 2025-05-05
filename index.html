@@ -58,43 +58,40 @@
   <h1 style="text-align: center;">Registrazione Cliente</h1>
   <form id="customerForm">
     <!-- Sezione principale -->
-	<label for="vatCode">Partita IVA:</label>
+	<label for="vatCode">VAT number:</label>
 	<input 
 	  type="text" 
 	  id="vatCode" 
-	  placeholder="Inserisci la Partita IVA (solo parte numerica!)" 
-	  required 
-	  pattern="[0-9]+" 
-	  title="Sono ammessi solo numeri."
-	>
-	<span id="errorVatCode" style="color: red; display: none;">Inserisci solo numeri.</span>
-	<button type="button" id="fetchDataButton">Compila automaticamente</button>
+	  name="vatCode" 
+	  placeholder="Inserisci il VAT code" 
+	  required>
+
 
 
     <!-- Campi compilati automaticamente -->
     <label for="companyName">Nome Azienda:</label>
-    <input type="text" id="companyName" placeholder="Nome Azienda" readonly>
+    <input type="text" id="companyName" placeholder="Nome Azienda" required>
 
     <label for="taxCode">Codice Fiscale:</label>
-    <input type="text" id="taxCode" placeholder="Codice Fiscale" readonly>
+    <input type="text" id="taxCode" placeholder="Codice Fiscale" required>
 
     <label for="sdiCode">Codice SDI:</label>
-    <input type="text" id="sdiCode" placeholder="Codice SDI" readonly>
+    <input type="text" id="sdiCode" placeholder="Codice SDI" required>
 
     <label for="address">Indirizzo:</label>
-    <input type="text" id="address" placeholder="Indirizzo" readonly>
+    <input type="text" id="address" placeholder="Indirizzo" required>
 
     <label for="town">Città:</label>
-    <input type="text" id="town" placeholder="Città" readonly>
+    <input type="text" id="town" placeholder="Città" required>
 
     <label for="province">Provincia:</label>
-    <input type="text" id="province" placeholder="Provincia" readonly>
+    <input type="text" id="province" placeholder="Provincia" required>
 
     <label for="zipCode">CAP:</label>
-    <input type="text" id="zipCode" placeholder="CAP" readonly>
+    <input type="text" id="zipCode" placeholder="CAP" required>
 
     <label for="region">Regione:</label>
-    <input type="text" id="region" placeholder="Regione" readonly>
+    <input type="text" id="region" placeholder="Regione" required>
 
     <!-- Nuova Sezione: Indirizzo di Spedizione -->
     <div class="section-title">Indirizzo di Spedizione</div>
@@ -488,29 +485,7 @@
   </form>
 
 <script>
-  // Funzione per mascherare i campi visibili con asterischi
-  function maskFields() {
-    const fieldsToMask = [
-      "companyName",
-      "taxCode",
-      "sdiCode",
-      "address",
-      "town",
-      "province",
-      "zipCode",
-      "region"
-    ];
-
-    fieldsToMask.forEach((fieldId) => {
-      const field = document.getElementById(fieldId);
-      if (field.value) {
-        field.dataset.realValue = field.value; // Salva il valore reale nel dataset
-        field.value = "*".repeat(field.value.length); // Mostra asterischi
-      }
-    });
-  }
-
-// Funzione per bloccare i caratteri non consentiti
+  // Funzione per bloccare i caratteri non consentiti
 function blockInvalidCharacters(event) {
   // Lista di caratteri non consentiti
   const invalidCharacters = /["\,]/g;
@@ -555,87 +530,6 @@ document.getElementById("customerForm").addEventListener("submit", function(even
     }
 });
 
-  // Funzione per effettuare la chiamata API a OpenAPI
-async function fetchCompanyData(vatCode) {
-  const url = `/.netlify/functions/fetchCompanyData?vatCode=${vatCode}`;
-  const fieldsToDisable = [
-    "companyName",
-    "taxCode",
-    "sdiCode",
-    "address",
-    "town",
-    "province",
-    "zipCode",
-    "region",
-    "vatCode",
-    "shippingStreet",
-    "shippingStreetNumber",
-    "shippingCountry",
-    "shippingTown",
-    "shippingProvince",
-    "shippingZipCode",
-    "email",
-    "pec",
-    "phone",
-    "conosciuti",
-    "agente",
-    "iban",
-    "category",
-    "consortium",
-    "consortiumName",
-    "paymentTerms",
-    "notes"
-  ];
-
-  try {
-    const response = await fetch(url, {
-      method: "GET",
-    });
-
-    if (!response.ok) {
-      throw new Error(`Errore API: ${response.status} ${response.statusText}`);
-    }
-
-    const data = await response.json();
-
-    if (data && data.data && data.data.length > 0) {
-      const company = data.data[0];
-
-      // Popola i campi del form con i valori reali
-      document.getElementById("companyName").value = company.companyName || "";
-      document.getElementById("taxCode").value = company.taxCode || "";
-      document.getElementById("sdiCode").value = company.sdiCode || "";
-      document.getElementById("address").value = company.address.registeredOffice.streetName || "";
-      document.getElementById("town").value = company.address.registeredOffice.town || "";
-      document.getElementById("province").value = company.address.registeredOffice.province || "";
-      document.getElementById("zipCode").value = company.address.registeredOffice.zipCode || "";
-      document.getElementById("region").value = company.address.registeredOffice.region.description || "";
-
-      // Maschera i campi visibili
-      maskFields();
-
-      alert("Dati caricati con successo!");
-    } else {
-      handleApiError(fieldsToDisable);
-    }
-  } catch (error) {
-    console.error("Errore durante la chiamata API:", error);
-    handleApiError(fieldsToDisable);
-  }
-}
-
-// Funzione per gestire l'errore API
-function handleApiError(fieldsToDisable) {
-  // Disabilita tutti i campi del form
-  fieldsToDisable.forEach((fieldId) => {
-    const field = document.getElementById(fieldId);
-    field.setAttribute("disabled", "disabled");
-  });
-
-  // Mostra il messaggio di errore
-  alert("Partita IVA non trovata, per completare la registrazione si prega di effettuare richiesta a info@faneurope.it");
-}
-
   // Funzione per inviare i dati al server (con valori reali)
   async function sendDataToGoogleSheet(formData) {
     const url = `/.netlify/functions/sendToGoogleSheet`;
@@ -660,33 +554,7 @@ function handleApiError(fieldsToDisable) {
     }
   }
 
-  // Evento per la compilazione automatica con OpenAPI
-  document.getElementById("fetchDataButton").addEventListener("click", () => {
-    const vatCode = document.getElementById("vatCode").value;
-    const button = document.getElementById("fetchDataButton");
-
-    if (!vatCode) {
-      alert("Per favore, inserisci una Partita IVA.");
-      return;
-    }
-
-    // Disabilita il pulsante al clic
-    button.disabled = true;
-    button.textContent = "Caricamento...";
-
-    fetchCompanyData(vatCode)
-      .then(() => {
-        button.textContent = "Compilazione effettuata";
-      })
-      .catch((error) => {
-        console.error("Errore durante la chiamata API:", error);
-        alert("Errore durante la chiamata API. Riprova.");
-        button.textContent = "Compila automaticamente";
-      })
-      .finally(() => {
-        button.disabled = false;
-      });
-  });
+  
 
   // Evento per il salvataggio (invio valori reali al server)
   document.getElementById("customerForm").addEventListener("submit", (event) => {
@@ -732,7 +600,7 @@ function handleApiError(fieldsToDisable) {
 
     fieldsToSubmit.forEach((fieldId) => {
       const field = document.getElementById(fieldId);
-      formData[fieldId] = field.dataset.realValue || field.value; // Usa il valore reale se presente
+      formData[fieldId] = field.value; // Usa il valore reale se presente
     });
 
     sendDataToGoogleSheet(formData)
