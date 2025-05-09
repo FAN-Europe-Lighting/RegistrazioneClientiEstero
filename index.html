@@ -576,7 +576,7 @@ function blockInvalidCharacters(event) {
 
   // Controlla se il valore contiene caratteri non consentiti
   if (invalidCharacters.test(event.target.value)) {
-    alert('Non puoi inserire i caratteri "," o " " in questo campo.');
+    alert('You cannot enter the characters "," or " " in this field.');
     // Rimuovi i caratteri non consentiti
     event.target.value = event.target.value.replace(invalidCharacters, "");
   }
@@ -631,10 +631,10 @@ document.getElementById("customerForm").addEventListener("submit", function(even
         throw new Error(`Errore durante l'invio al server: ${response.statusText}`);
       }
 
-      alert("Registrazione completata con successo!");
+      alert("You have successfully registered!");
     } catch (error) {
       console.error("Errore durante l'invio al server:", error);
-      alert("Errore durante la registrazione.");
+      alert("An error occurred during registration.");
     }
   }
 
@@ -649,7 +649,7 @@ document.getElementById("customerForm").addEventListener("submit", function(even
 
     // Cambia stato del pulsante
     submitButton.disabled = true;
-    submitButton.textContent = "Registrazione in corso...";
+    submitButton.textContent = "Registration in progress...";
 
     const fieldsToSubmit = [
       "companyName",
