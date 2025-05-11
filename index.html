@@ -603,17 +603,6 @@ document.querySelectorAll("input, textarea").forEach((field) => {
     }
 });
 
-// Verifica lunghezza del numero al momento dell'invio del modulo
-document.getElementById("customerForm").addEventListener("submit", function(event) {
-    const phoneInput = document.getElementById("phone");
-    const phoneError = document.getElementById("phoneError");
-
-    if (phoneInput.value.length !== 10) {
-        phoneError.style.display = "inline"; // Mostra il messaggio di errore
-        event.preventDefault(); // Blocca l'invio del modulo
-    }
-});
-
   // Funzione per inviare i dati al server (con valori reali)
   async function sendDataToGoogleSheet(formData) {
     const url = `/.netlify/functions/sendToGoogleSheet`;
